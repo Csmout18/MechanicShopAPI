@@ -4,8 +4,8 @@ from flask import Flask
 from .extensions import ma
 from .models import db
 from .blueprints.customers import customers_bp
-from .blueprints_mechanics.mechanics import mechanics_bp
-from .blueprints_service_ticket.service_tickets import service_tickets_bp 
+from .blueprints.mechanics import mechanics_bp
+from .blueprints.service_tickets import service_tickets_bp 
 
 
 def create_app(config_name):
