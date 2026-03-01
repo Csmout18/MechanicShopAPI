@@ -1,14 +1,46 @@
-from .schemas import customer_schema, customers_schema
+from .schemas import customer_schema, customers_schema, login_schema
 from flask import request, jsonify
 from marshmallow import ValidationError
 from sqlalchemy import select
 from app.models import Customer, db
-from . import customers_bp
+from app.blueprints.customers import customers_bp
+from app.extensions import limiter, cache
+from app.utils.util import encode_token, token_required
 
 # ===== CUSTOMER ROUTES ===== #
 
+#CUSTOMER LOGIN WITH TOKEN AUTHORIZATION
+
+@customers_bp.route('/login', methods=['POST'])
+def login():
+    
+    try:
+        credentials = login_schema.load(request.json)
+        email = credentials['email']
+        password = credentials['password']
+    except ValidationError as e:
+        return jsonify(e.messages), 400
+    
+    query = select(Customer).where(Customer.email == email)
+    customer = db.session.execute(query).scalars().first()
+    
+    if customer and customer.password == password:
+        token = encode_token(customer.id)
+        
+        response = {
+            "status": "success",
+            "message": "successfully logged in.",
+            "token": token
+        }
+        
+        return jsonify(response), 200
+    else: 
+        return jsonify({"error": "Invalid password or email."}), 400
+    
+
 # CREATE CUSTOMER
 @customers_bp.route('/', methods=['POST'])
+@limiter.limit("15/day") #Limits this request to 15 times per day to avoid bot accounts
 def create_customer():
     try:
         customer_data = customer_schema.load(request.json)
@@ -26,9 +58,16 @@ def create_customer():
     return customer_schema.jsonify(new_customer), 201
 
 #GET ALL CUSTOMERS
-@customers_bp.route('/', methods=['GET'])
+@customers_bp.route('/', methods=['GET']) #add ?page=(number)&per_page=(number) to paginate results
 def get_customers():
-    query = select(Customer)
+    try:
+        page = int(request.args.get('page'))
+        per_page = int(request.args.get('per_page'))
+        query = select(Customer)
+        customers = db.paginate(query, page=page, per_page=per_page)
+        return customers_schema.jsonify(customers), 200
+    except:
+        query = select(Customer)
     customers = db.session.execute(query).scalars().all()
     return customers_schema.jsonify(customers), 200
 
@@ -43,6 +82,8 @@ def get_customer(customer_id):
 
 #UPDATE CUSTOMER
 @customers_bp.route('/<int:customer_id>', methods=['PUT'])
+@limiter.limit("1/week") #Limits this request to once per week
+@token_required
 def update_customer(customer_id):
     customer = db.session.get(Customer, customer_id)
     
@@ -59,7 +100,8 @@ def update_customer(customer_id):
     return customer_schema.jsonify(customer), 200
 
 #DELETE CUSTOMER
-@customers_bp.route('/<int:customer_id>', methods=['DELETE'])
+@customers_bp.route('/', methods=['DELETE'])
+@token_required
 def delete_customer(customer_id):
     customer = db.session.get(Customer, customer_id)
     
