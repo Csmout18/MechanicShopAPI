@@ -2,7 +2,7 @@ MECHANIC SHOP API
 
 Overview
 --------
-This is a REST API built with Flask for managing a mechanic shop. The API provides endpoints for managing customers, mechanics, and service tickets.
+This is a REST API built with Flask for managing a mechanic shop. The API provides endpoints for managing customers, mechanics, service tickets, inventory parts, and orders.
 
 Technology Stack
 ----------------
@@ -11,22 +11,40 @@ Technology Stack
 - MySQL (Database)
 - Marshmallow (Data serialization and validation)
 - Flask-SQLAlchemy (Flask-SQLAlchemy extension)
+- Flask-Limiter (Rate limiting)
+- Flask-Caching (Response caching)
 
 API Endpoints
 -------------
-The API is organized into three main blueprints:
+The API is organized into five main blueprints:
 
 /customers
 - Manage customer information
 - CREATE, READ, UPDATE, DELETE operations
+- Token-based authentication for customer-specific data
 
 /mechanics  
 - Manage mechanic information
 - CREATE, READ, UPDATE, DELETE operations
+- Sort mechanics by number of assigned tickets
 
 /service_tickets
 - Manage service tickets/work orders
 - CREATE, READ, UPDATE, DELETE operations
+- Assign/unassign mechanics to tickets
+- Assign customers to tickets
+- Rate limiting (5 tickets per day)
+
+/inventory
+- Manage parts inventory
+- CREATE, READ, UPDATE, DELETE operations
+- Pagination support
+- Duplicate part prevention
+
+/orders
+- Add parts to service tickets
+- Generate receipts with total costs
+- Calculate pricing for parts used
 
 Setup Instructions
 ------------------
@@ -58,9 +76,15 @@ app/
     customers/      - Customer management endpoints
     mechanics/      - Mechanic management endpoints  
     service_tickets/ - Service ticket endpoints
+    inventory/      - Inventory parts management
+    orders/         - Order processing and receipts
+  utils/
+    util.py         - Utility functions (token authentication)
 
 Development
 -----------
 The application uses Flask's development server with debug mode enabled.
 Database tables are automatically created when the application starts.
 All API endpoints support JSON request/response format.
+Rate limiting is implemented on ticket creation to prevent spam.
+Response caching is enabled for frequently accessed data.
