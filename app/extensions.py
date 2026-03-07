@@ -5,5 +5,5 @@ from flask_caching import Cache
 import app
 
 ma = Marshmallow()
-limiter = Limiter(key_func=get_remote_address, default_limits=["200 per day, 50 per hour"]) #default limit for all routes, can be overridden
+limiter = Limiter(key_func=get_remote_address, default_limits=[]) #default limit for all routes, can be overridden
 cache = Cache()

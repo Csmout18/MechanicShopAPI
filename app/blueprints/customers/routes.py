@@ -81,8 +81,7 @@ def get_customer(customer_id):
     return jsonify({"error": "Customer not found"}), 404
 
 #UPDATE CUSTOMER
-@customers_bp.route('/<int:customer_id>', methods=['PUT'])
-@limiter.limit("1/week") #Limits this request to once per week
+@customers_bp.route('/', methods=['PUT'])
 @token_required
 def update_customer(customer_id):
     customer = db.session.get(Customer, customer_id)

@@ -41,7 +41,7 @@ class ServiceTicket(Base):
     customer: Mapped['Customer'] = db.relationship(back_populates='service_tickets')
     mechanics: Mapped[List['Mechanic']] = db.relationship(secondary=service_mechanics, back_populates='service_tickets')
     service_ticket_parts: Mapped[List['ServiceTicketParts']] = db.relationship(back_populates='service_ticket')
-      
+
 
 class Mechanic(Base):
     __tablename__ = 'mechanics'
