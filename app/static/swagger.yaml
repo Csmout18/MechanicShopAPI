@@ -1,4 +1,4 @@
-swagger: '2.0'
+swagger: '2.0' 
 info:
   title: "Mechanic Shop API"
   description: "This is a API to manage a Mechanic Shop"
@@ -386,12 +386,6 @@ paths:
         - Mechanics
       summary: "Returns all Mechanics"
       description: "Returns a list of all Mechanics in our Mechanic Shop."
-      parameters:
-        - in: "path"
-          name: "mechanic_id"
-          description: "ID of the mechanic to update"
-          required: true
-          type: "integer"
       responses:
         200:
           description: "Successful retrieval of all mechanics"
@@ -431,18 +425,7 @@ paths:
       tags:
         - Service Tickets
       summary: "Returns all Service Tickets"
-      description: "Returns a list of all Service Tickets in our Mechanic Shop system. Supports pagination with ?page=1&per_page=10"
-      parameters:
-        - in: "query"
-          name: "page"
-          description: "Page number for pagination"
-          required: false
-          type: "integer"
-        - in: "query"
-          name: "per_page"
-          description: "Number of items per page"
-          required: false
-          type: "integer"
+      description: "Returns a list of all Service Tickets in our Mechanic Shop system."
       responses:
         200:
           description: "Successful retrieval of all Service Tickets"

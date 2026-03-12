@@ -1,0 +1,1 @@
+run ##  python -m unittest discover app/tests -v  ## inside of the terminal to run all tests

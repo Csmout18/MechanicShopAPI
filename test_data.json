@@ -1,0 +1,419 @@
+{
+  "customers": [
+    {
+      "name": "John Smith",
+      "email": "john.smith@email.com", 
+      "phone": "555-0101",
+      "password": "password123"
+    },
+    {
+      "name": "Sarah Johnson", 
+      "email": "sarah.johnson@email.com",
+      "phone": "555-0102", 
+      "password": "password123"
+    },
+    {
+      "name": "Mike Davis",
+      "email": "mike.davis@email.com",
+      "phone": "555-0103",
+      "password": "password123"
+    }
+  ],
+
+  "mechanics": [
+    {
+      "name": "Alex Rodriguez",
+      "email": "alex.rodriguez@mechanicshop.com",
+      "phone": "555-0201",
+      "salary": 65000.00
+    },
+    {
+      "name": "Jessica Chen", 
+      "email": "jessica.chen@mechanicshop.com",
+      "phone": "555-0202",
+      "salary": 72000.00
+    },
+    {
+      "name": "Marcus Thompson",
+      "email": "marcus.thompson@mechanicshop.com", 
+      "phone": "555-0203",
+      "salary": 58000.00
+    },
+    {
+      "name": "Diana Martinez",
+      "email": "diana.martinez@mechanicshop.com",
+      "phone": "555-0204", 
+      "salary": 69000.00
+    },
+    {
+      "name": "Robert Kim",
+      "email": "robert.kim@mechanicshop.com",
+      "phone": "555-0205",
+      "salary": 75000.00
+    }
+  ],
+
+  "service_tickets": [
+    {
+      "VIN": "1HGCM82633A123456",
+      "service_date": "2024-02-24",
+      "service_desc": "Oil change and brake inspection",
+      "customer_id": 1
+    },
+    {
+      "VIN": "2T1BURHE9JC987654", 
+      "service_date": "2024-02-25",
+      "service_desc": "Transmission repair and fluid replacement",
+      "customer_id": 2  
+    },
+    {
+      "VIN": "KMHLN4AJ8KU456789",
+      "service_date": "2024-02-26", 
+      "service_desc": "Engine diagnostic and tune-up",
+      "customer_id": 3
+    }
+  ],
+
+  "parts": [
+    {
+      "part_name": "Engine Oil Filter",
+      "price": 14.99
+    },
+    {
+      "part_name": "Brake Pads Set (Front)",
+      "price": 89.50
+    },
+    {
+      "part_name": "Spark Plugs (Set of 4)",
+      "price": 45.75
+    },
+    {
+      "part_name": "Air Filter",
+      "price": 22.99
+    },
+    {
+      "part_name": "Cabin Air Filter", 
+      "price": 18.50
+    },
+    {
+      "part_name": "Timing Belt",
+      "price": 125.00
+    },
+    {
+      "part_name": "Brake Rotors (Pair)",
+      "price": 156.99
+    },
+    {
+      "part_name": "Transmission Fluid (1 Quart)",
+      "price": 12.75
+    },
+    {
+      "part_name": "Battery (12V)",
+      "price": 89.99
+    },
+    {
+      "part_name": "Alternator",
+      "price": 245.00
+    },
+    {
+      "part_name": "Starter Motor",
+      "price": 189.99
+    },
+    {
+      "part_name": "Serpentine Belt",
+      "price": 28.50
+    }
+  ],
+
+  "mechanic_assignments": {
+    "service_ticket_1": {
+      "description": "Assign 2 mechanics to ticket 1 (oil change)",
+      "request_body": {
+        "add_mechanic_ids": [1, 2]
+      }
+    },
+    "service_ticket_2": {
+      "description": "Assign 3 mechanics to ticket 2 (transmission repair)", 
+      "request_body": {
+        "add_mechanic_ids": [2, 3, 4]
+      }
+    },
+    "service_ticket_3": {
+      "description": "Assign 4 mechanics to ticket 3 (engine diagnostic)",
+      "request_body": {
+        "add_mechanic_ids": [1, 3, 4, 5]
+      }
+    },
+    "remove_mechanics_example": {
+      "description": "Remove some mechanics from ticket 3",
+      "request_body": {
+        "add_mechanic_ids": [],
+        "remove_mechanic_ids": [1, 5]
+      }
+    },
+    "add_only_example": {
+      "description": "Only add mechanics (remove_mechanic_ids is optional)",
+      "request_body": {
+        "add_mechanic_ids": [2]
+      }
+    }
+  },
+
+  "postman_test_sequence": {
+    "step_1": "POST /customers - Create all 3 customers",
+    "step_2": "POST /mechanics - Create all 5 mechanics", 
+    "step_3": "POST /parts - Create all 12 parts",
+    "step_4": "POST /service_tickets - Create all 3 service tickets",
+    "step_5": "PUT /service_tickets/{id} - Use mechanic_assignments to test mechanic assignment",
+    "step_6": "POST /orders/{service_ticket_id}/parts - Add parts to service tickets",
+    "step_7": "GET /orders/{service_ticket_id}/receipt - Get receipts with part totals",
+    "step_8": "GET /service_tickets - Verify all tickets with assigned mechanics and parts",
+    "step_9": "GET /service_tickets/sorted-by-mechanics - Test mechanics sorted by number of tickets assigned",
+    "step_10": "GET /service_tickets/my-tickets - Test token-protected endpoint (need JWT token)"
+  },
+
+  "parts_test_scenarios": {
+    "create_parts": {
+      "description": "Create individual parts using POST /parts/",
+      "note": "Use the parts array above for test data"
+    },
+    "get_all_parts": {
+      "description": "Retrieve all parts",
+      "endpoint": "GET /parts/",
+      "test_pagination": "GET /parts/?page=1&per_page=5"
+    },
+    "get_part_by_id": {
+      "description": "Test individual part retrieval",
+      "valid_requests": [
+        "GET /parts/1 - Should return Engine Oil Filter",
+        "GET /parts/5 - Should return Cabin Air Filter",
+        "GET /parts/10 - Should return Alternator"
+      ],
+      "invalid_request": "GET /parts/999 - Should return 404"
+    },
+    "update_parts": {
+      "description": "Test part updates using PUT /parts/{id}",
+      "examples": [
+        {
+          "endpoint": "PUT /parts/1",
+          "body": {
+            "part_name": "Premium Engine Oil Filter",
+            "price": 19.99
+          }
+        },
+        {
+          "endpoint": "PUT /parts/2", 
+          "body": {
+            "part_name": "Ceramic Brake Pads Set (Front)",
+            "price": 129.99
+          }
+        }
+      ]
+    },
+    "delete_parts": {
+      "description": "Test part deletion using DELETE /parts/{id}",
+      "valid_delete": "DELETE /parts/12 - Delete Serpentine Belt",
+      "invalid_delete": "DELETE /parts/999 - Should return 404"
+    },
+    "error_testing": {
+      "description": "Test error handling",
+      "missing_fields": {
+        "endpoint": "POST /parts/",
+        "body": {
+          "part_name": "Incomplete Part"
+        },
+        "expected": "400 Bad Request - Missing price"
+      },
+      "duplicate_part": {
+        "description": "Try creating part with same name twice",
+        "endpoint": "POST /parts/",
+        "body": {
+          "part_name": "Engine Oil Filter",
+          "price": 15.99
+        },
+        "expected": "400 Bad Request - Part already exists"
+      },
+      "invalid_price": {
+        "endpoint": "POST /parts/",
+        "body": {
+          "part_name": "Free Part",
+          "price": -5.00
+        },
+        "expected": "Depends on validation rules"
+      }
+    }
+  },
+
+  "service_ticket_parts_test_scenarios": {
+    "description": "Test scenarios for adding parts to service tickets and generating receipts",
+    "base_url": "/orders",
+    "add_parts_to_service_ticket": {
+      "description": "Add parts to existing service tickets using POST /orders/{service_ticket_id}/parts",
+      "examples": [
+        {
+          "endpoint": "POST /orders/1/parts",
+          "description": "Add oil filter and brake pads to service ticket 1",
+          "request_body": {
+            "part_quant": [
+              {"part_id": 1, "part_quant": 2},
+              {"part_id": 2, "part_quant": 1}
+            ]
+          },
+          "expected_response": {
+            "status": 201,
+            "includes": ["total", "service_ticket", "service_ticket_parts"]
+          }
+        },
+        {
+          "endpoint": "POST /orders/2/parts",
+          "description": "Add transmission fluid and timing belt to service ticket 2",
+          "request_body": {
+            "part_quant": [
+              {"part_id": 8, "part_quant": 3},
+              {"part_id": 6, "part_quant": 1}
+            ]
+          }
+        },
+        {
+          "endpoint": "POST /orders/3/parts", 
+          "description": "Add multiple parts for engine diagnostic work",
+          "request_body": {
+            "part_quant": [
+              {"part_id": 3, "part_quant": 1},
+              {"part_id": 4, "part_quant": 2},
+              {"part_id": 12, "part_quant": 1}
+            ]
+          }
+        }
+      ]
+    },
+    "get_service_ticket_receipt": {
+      "description": "Get receipt with total cost for service ticket parts",
+      "examples": [
+        {
+          "endpoint": "GET /orders/1/receipt",
+          "description": "Get receipt for service ticket 1 parts",
+          "expected_response": {
+            "status": 200,
+            "structure": {
+              "total": "float - sum of all parts costs",
+              "service_ticket": {
+                "id": 1,
+                "VIN": "string",
+                "service_date": "string",
+                "service_desc": "string", 
+                "customer_id": "int",
+                "service_ticket_parts": [
+                  {
+                    "quantity": "int",
+                    "part": {
+                      "part_name": "string",
+                      "price": "float"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "endpoint": "GET /orders/2/receipt",
+          "description": "Get receipt for service ticket 2 parts"
+        },
+        {
+          "endpoint": "GET /orders/3/receipt",
+          "description": "Get receipt for service ticket 3 parts"
+        }
+      ]
+    },
+    "error_testing": {
+      "description": "Test error handling scenarios",
+      "examples": [
+        {
+          "endpoint": "POST /orders/999/parts",
+          "description": "Try to add parts to non-existent service ticket", 
+          "request_body": {
+            "part_quant": [{"part_id": 1, "part_quant": 1}]
+          },
+          "expected": "404 - Service ticket not found"
+        },
+        {
+          "endpoint": "GET /orders/999/receipt",
+          "description": "Try to get receipt for non-existent service ticket",
+          "expected": "404 - Service ticket not found"
+        },
+        {
+          "endpoint": "POST /orders/1/parts",
+          "description": "Add parts with invalid data",
+          "request_body": {
+            "part_quant": [{"part_id": 999, "part_quant": 1}]
+          },
+          "expected": "Foreign key constraint error or 400"
+        },
+        {
+          "endpoint": "POST /orders/1/parts",
+          "description": "Missing required fields",
+          "request_body": {
+            "part_quant": [{"part_id": 1}]
+          },
+          "expected": "400 - Missing part_quant field"
+        }
+      ]
+    },
+    "testing_workflow": {
+      "description": "Recommended testing sequence",
+      "steps": [
+        "1. Create customers, mechanics, and parts (use existing test data above)",
+        "2. Create service tickets (use existing test data above)", 
+        "3. POST /orders/1/inventory - Add parts to first service ticket",
+        "4. GET /orders/1/inventory/receipt - Verify receipt shows correct total and part details",
+        "5. POST /orders/1/inventory - Add more parts to same ticket",
+        "6. GET /orders/1/inventory/receipt - Verify total includes all parts",
+        "7. Test error scenarios with invalid service ticket IDs",
+        "8. Test all three service tickets with different part combinations"
+      ]
+    },
+    "sample_calculations": {
+      "description": "Expected total calculations for testing",
+      "note": "Verify these totals match your receipt responses",
+      "examples": [
+        {
+          "scenario": "Service Ticket 1 with Oil Filter + Brake Pads",
+          "parts": [
+            "Engine Oil Filter: $14.99 x 2 = $29.98",
+            "Brake Pads Set: $89.50 x 1 = $89.50"
+          ],
+          "expected_total": "$119.48"
+        },
+        {
+          "scenario": "Service Ticket 2 with Transmission Parts",
+          "parts": [
+            "Transmission Fluid: $12.75 x 3 = $38.25",
+            "Timing Belt: $125.00 x 1 = $125.00"
+          ],
+          "expected_total": "$163.25"
+        }
+      ]
+    }
+  },
+
+  "sorting_endpoint_test": {
+    "endpoint": "GET /service_tickets/sorted-by-mechanics",
+    "description": "Returns mechanics sorted by number of service tickets (descending)", 
+    "expected_order_after_assignments": [
+      "1st: Jessica Chen (appears in tickets 1 & 2)",
+      "2nd: Marcus Thompson (appears in tickets 2 & 3)", 
+      "3rd: Diana Martinez (appears in tickets 2 & 3)",
+      "4th: Alex Rodriguez (appears in ticket 1 only)",
+      "5th: Robert Kim (appears in ticket 3 only)"
+    ],
+    "note": "Order may vary for mechanics with same number of tickets"
+  },
+
+  "sample_customer_login": {
+    "description": "Use for getting JWT token to test /my-tickets endpoint",
+    "email": "john.smith@email.com",
+    "password": "password123"
+  }
+}
+
