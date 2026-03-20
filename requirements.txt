@@ -25,7 +25,9 @@ marshmallow-sqlalchemy==1.1.0
 mysql-connector-python==9.5.0
 ordered-set==4.1.0
 packaging==26.0
+psycopg2==2.9.11
 pyasn1==0.6.2
+python-dotenv==1.2.2
 python-jose==3.5.0
 PyYAML==6.0.3
 requests==2.32.5

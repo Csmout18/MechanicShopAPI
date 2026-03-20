@@ -1,3 +1,6 @@
+import os
+
+
 class DevelopmentConfig:
     SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:123Kaka$hi456@localhost/library_db'
     DEBUG = True
@@ -8,7 +11,8 @@ class TestingConfig:
     pass
 
 class ProductionConfig:
-    pass
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    CACHE_TYPE = "SimpleCache"
 
 class TestingConfig:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///testing.db'
